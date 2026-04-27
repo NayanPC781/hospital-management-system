@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+import RoleLayout from './components/layout/RoleLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
@@ -17,11 +17,11 @@ const DashboardRouter = () => {
   
   switch (user.role) {
     case 'admin':
-      return <AdminDashboard />;
+      return <Navigate to="/admin" replace />;
     case 'doctor':
-      return <DoctorDashboard />;
+      return <Navigate to="/doctor" replace />;
     case 'patient':
-      return <PatientDashboard />;
+      return <Navigate to="/patient" replace />;
     default:
       return <Navigate to="/login" />;
   }
@@ -32,7 +32,6 @@ const App = () => {
     <AuthProvider>
       <Router>
         <div className="app">
-          <Navbar />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -43,6 +42,36 @@ const App = () => {
                   <DashboardRouter />
                 </ProtectedRoute>
               } 
+            />
+            <Route
+              path="/patient"
+              element={
+                <ProtectedRoute roles={['patient']}>
+                  <RoleLayout>
+                    <PatientDashboard />
+                  </RoleLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/doctor"
+              element={
+                <ProtectedRoute roles={['doctor']}>
+                  <RoleLayout>
+                    <DoctorDashboard />
+                  </RoleLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute roles={['admin']}>
+                  <RoleLayout>
+                    <AdminDashboard />
+                  </RoleLayout>
+                </ProtectedRoute>
+              }
             />
             <Route path="/" element={<Navigate to="/dashboard" />} />
           </Routes>

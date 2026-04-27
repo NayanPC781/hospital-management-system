@@ -24,6 +24,7 @@ export const authService = {
 
 export const doctorService = {
   getAll: () => api.get('/doctors'),
+  getAllWithSchedules: () => api.get('/doctors/with-schedules'),
   getById: (id) => api.get(`/doctors/${id}`),
   add: (data) => api.post('/doctors', data),
   update: (id, data) => api.put(`/doctors/${id}`, data),
@@ -35,7 +36,8 @@ export const doctorService = {
 export const appointmentService = {
   getAll: () => api.get('/appointments'),
   book: (data) => api.post('/appointments', data),
-  update: (id, data) => api.put(`/appointments/${id}`, data),
+  updateStatus: (id, status) => api.put(`/appointments/${id}/status`, { status }),
+  reschedule: (id, data) => api.patch(`/appointments/${id}/reschedule`, data),
   cancel: (id) => api.delete(`/appointments/${id}`)
 };
 

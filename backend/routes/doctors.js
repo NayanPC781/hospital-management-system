@@ -6,6 +6,9 @@ const { auth, authorize } = require('../middleware/auth');
 
 const router = express.Router();
 
+const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
+const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 const validate = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -14,10 +17,92 @@ const validate = (req, res, next) => {
   next();
 };
 
+const toMinutes = (time) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+};
+
+const validateScheduleEntries = (entries) => {
+  if (!Array.isArray(entries)) {
+    return 'Schedule must be an array';
+  }
+
+  const slotsByDay = {};
+  for (const slot of entries) {
+    if (!slot || typeof slot !== 'object') {
+      return 'Each schedule entry must be an object';
+    }
+    if (!slot.day || !slot.startTime || !slot.endTime) {
+      return 'Each schedule entry must include day, startTime, and endTime';
+    }
+    if (!DAYS.includes(slot.day)) {
+      return 'Schedule day is invalid';
+    }
+    if (!TIME_PATTERN.test(slot.startTime) || !TIME_PATTERN.test(slot.endTime)) {
+      return 'Schedule times must use HH:mm format';
+    }
+
+    const start = toMinutes(slot.startTime);
+    const end = toMinutes(slot.endTime);
+    if (start >= end) {
+      return 'Schedule start time must be before end time';
+    }
+    if (start % 15 !== 0 || end % 15 !== 0) {
+      return 'Schedule times must align to 15-minute intervals';
+    }
+
+    if (!slotsByDay[slot.day]) {
+      slotsByDay[slot.day] = [];
+    }
+    slotsByDay[slot.day].push({ start, end });
+  }
+
+  for (const day of Object.keys(slotsByDay)) {
+    const slots = slotsByDay[day].sort((a, b) => a.start - b.start);
+    for (let i = 1; i < slots.length; i += 1) {
+      if (slots[i].start < slots[i - 1].end) {
+        return `Schedule has overlapping time windows on ${day}`;
+      }
+    }
+  }
+
+  return null;
+};
+
 router.get('/', auth, async (req, res) => {
   try {
-    const doctors = await User.find({ role: 'doctor' }).select('-password');
+    const includeInactive = req.user.role === 'admin' && req.query.includeInactive === 'true';
+    const query = { role: 'doctor' };
+    if (!includeInactive) {
+      query.isActive = true;
+    }
+
+    const doctors = await User.find(query).select('-password');
     res.json(doctors);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+router.get('/with-schedules', auth, async (req, res) => {
+  try {
+    const includeInactive = req.user.role === 'admin' && req.query.includeInactive === 'true';
+    const query = { role: 'doctor' };
+    if (!includeInactive) {
+      query.isActive = true;
+    }
+
+    const doctors = await User.find(query).select('-password');
+    const doctorIds = doctors.map((doctor) => doctor._id);
+    const schedules = await DoctorSchedule.find({ doctor: { $in: doctorIds } });
+
+    const scheduleMap = new Map(schedules.map((item) => [item.doctor.toString(), item]));
+    const payload = doctors.map((doctor) => ({
+      ...doctor.toObject(),
+      schedule: scheduleMap.get(doctor._id.toString())?.schedule || []
+    }));
+
+    res.json(payload);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -26,7 +111,7 @@ router.get('/', auth, async (req, res) => {
 router.get('/:id', auth, async (req, res) => {
   try {
     const doctor = await User.findOne({ _id: req.params.id, role: 'doctor' }).select('-password');
-    if (!doctor) {
+    if (!doctor || (doctor.isActive === false && req.user.role !== 'admin')) {
       return res.status(404).json({ message: 'Doctor not found' });
     }
 
@@ -58,7 +143,8 @@ router.post('/', auth, authorize('admin'), [
       email,
       password,
       role: 'doctor',
-      specialization: specialization || ''
+      specialization: specialization || '',
+      isActive: true
     });
 
     await doctor.save();
@@ -74,7 +160,8 @@ router.post('/', auth, authorize('admin'), [
       firstName: doctor.firstName,
       lastName: doctor.lastName,
       email: doctor.email,
-      specialization: doctor.specialization
+      specialization: doctor.specialization,
+      isActive: doctor.isActive
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -83,9 +170,14 @@ router.post('/', auth, authorize('admin'), [
 
 router.put('/:id/schedule', auth, authorize('admin'), async (req, res) => {
   try {
-    const doctor = await User.findOne({ _id: req.params.id, role: 'doctor' });
+    const doctor = await User.findOne({ _id: req.params.id, role: 'doctor', isActive: true });
     if (!doctor) {
       return res.status(404).json({ message: 'Doctor not found' });
+    }
+
+    const scheduleValidationError = validateScheduleEntries(req.body.schedule);
+    if (scheduleValidationError) {
+      return res.status(400).json({ message: scheduleValidationError });
     }
 
     let schedule = await DoctorSchedule.findOne({ doctor: req.params.id });
@@ -126,7 +218,8 @@ router.put('/:id', auth, authorize('admin'), [
       firstName: doctor.firstName,
       lastName: doctor.lastName,
       email: doctor.email,
-      specialization: doctor.specialization
+      specialization: doctor.specialization,
+      isActive: doctor.isActive
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -140,10 +233,10 @@ router.delete('/:id', auth, authorize('admin'), async (req, res) => {
       return res.status(404).json({ message: 'Doctor not found' });
     }
 
-    await DoctorSchedule.findOneAndDelete({ doctor: req.params.id });
-    await User.findByIdAndDelete(req.params.id);
+    doctor.isActive = false;
+    await doctor.save();
 
-    res.json({ message: 'Doctor deleted successfully' });
+    res.json({ message: 'Doctor deactivated successfully' });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -151,6 +244,11 @@ router.delete('/:id', auth, authorize('admin'), async (req, res) => {
 
 router.get('/:id/schedule', auth, async (req, res) => {
   try {
+    const doctor = await User.findOne({ _id: req.params.id, role: 'doctor' }).select('_id isActive');
+    if (!doctor || (doctor.isActive === false && req.user.role !== 'admin')) {
+      return res.status(404).json({ message: 'Doctor not found' });
+    }
+
     const schedule = await DoctorSchedule.findOne({ doctor: req.params.id });
     if (!schedule) {
       return res.status(404).json({ message: 'Schedule not found' });

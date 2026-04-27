@@ -75,6 +75,9 @@ router.post('/login', [
     if (!user) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+    if (user.isActive === false) {
+      return res.status(403).json({ message: 'This account is inactive' });
+    }
 
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
