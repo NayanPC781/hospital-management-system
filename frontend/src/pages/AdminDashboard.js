@@ -210,7 +210,7 @@ const AdminDashboard = () => {
         <StatCard label="Total Appointments" value={metrics.total} tone="success" />
       </div>
 
-      {(activeTab === 'operations' || activeTab === 'doctors') && (
+      {activeTab === 'doctors' && (
         <>
           <PageHeader
             title="Doctor Management"
