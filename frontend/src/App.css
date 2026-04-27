@@ -384,8 +384,13 @@ input:focus, select:focus, textarea:focus {
 .role-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 260px 1fr;
   background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+  transition: grid-template-columns 0.3s ease;
+}
+
+.role-shell.collapsed {
+  grid-template-columns: 72px 1fr;
 }
 
 .role-sidebar {
@@ -395,50 +400,172 @@ input:focus, select:focus, textarea:focus {
   position: sticky;
   top: 0;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: width 0.3s ease;
+  overflow: hidden;
+}
+
+.role-shell.collapsed .role-sidebar {
+  padding: 20px 10px;
 }
 
 .role-brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 8px 10px;
-  margin-bottom: 16px;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  min-height: 56px;
+}
+
+.role-brand-icon {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  color: var(--primary);
+}
+
+.role-brand-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.role-brand-icon-sm {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto;
 }
 
 .role-brand strong {
   display: block;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .role-brand small {
-  color: var(--text-secondary);
+  color: var(--primary);
   font-size: 12px;
+  font-weight: 500;
 }
 
-.role-brand-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: linear-gradient(135deg, #2563eb, #14b8a6);
+.role-collapse-btn {
+  position: absolute;
+  top: 28px;
+  right: -14px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.role-collapse-btn:hover {
+  background: var(--bg-primary);
+  color: var(--primary);
+}
+
+.role-collapse-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.role-shell.collapsed .role-collapse-btn {
+  right: auto;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .role-nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
+  flex: 1;
 }
 
 .role-nav-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   color: var(--text-secondary);
-  padding: 10px 12px;
-  border-radius: 8px;
+  padding: 12px 14px;
+  border-radius: 10px;
   font-weight: 500;
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.2s ease;
 }
 
-.role-nav-item.active,
 .role-nav-item:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: #f1f5f9;
+  color: var(--text-primary);
+}
+
+.role-nav-item.active {
+  background: var(--primary);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.role-nav-item.active:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.role-nav-icon {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.role-nav-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.role-nav-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role-shell.collapsed .role-nav-item {
+  justify-content: center;
+  padding: 12px;
+}
+
+.role-shell.collapsed .role-nav-label {
+  display: none;
+}
+
+.role-sidebar-footer {
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.role-logout {
+  color: var(--error);
+}
+
+.role-logout:hover {
+  background: #fef2f2;
+  color: var(--error);
 }
 
 .role-content-wrap {
@@ -873,5 +1000,30 @@ input:focus, select:focus, textarea:focus {
 @media (max-width: 640px) {
   .time-slots-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1200px) {
+  .role-shell {
+    grid-template-columns: 220px 1fr;
+  }
+  
+  .role-brand {
+    padding: 10px;
+    min-height: 48px;
+  }
+  
+  .role-brand strong {
+    font-size: 14px;
+  }
+  
+  .role-nav-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  
+  .role-nav-icon {
+    width: 18px;
+    height: 18px;
   }
 }
