@@ -30,6 +30,7 @@ const AdminDashboard = () => {
     specialization: ''
   });
   const [scheduleModal, setScheduleModal] = useState({ doctorId: '', schedule: [], loading: false });
+  const [editDoctorModal, setEditDoctorModal] = useState({ doctor: null, firstName: '', lastName: '', specialization: '' });
   const activeTab = searchParams.get('tab') || 'operations';
 
   const showNotification = (message, type = 'success') => {
@@ -137,6 +138,31 @@ const AdminDashboard = () => {
       loadData();
     } catch (err) {
       showNotification(err.response?.data?.message || 'Failed to deactivate doctor', 'error');
+    }
+  };
+
+  const handleEditDoctor = (doctor) => {
+    setEditDoctorModal({
+      doctor,
+      firstName: doctor.firstName,
+      lastName: doctor.lastName,
+      specialization: doctor.specialization || ''
+    });
+  };
+
+  const handleUpdateDoctor = async (e) => {
+    e.preventDefault();
+    try {
+      await doctorService.update(editDoctorModal.doctor._id, {
+        firstName: editDoctorModal.firstName,
+        lastName: editDoctorModal.lastName,
+        specialization: editDoctorModal.specialization
+      });
+      showNotification('Doctor updated');
+      setEditDoctorModal({ doctor: null, firstName: '', lastName: '', specialization: '' });
+      loadData();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Failed to update doctor', 'error');
     }
   };
 
@@ -262,6 +288,7 @@ const AdminDashboard = () => {
                 <p>{doctor.specialization || 'General Medicine'}</p>
                 <small>{doctor.email}</small>
                 <div className="ui-appointment-actions">
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => handleEditDoctor(doctor)}>Edit</button>
                   <button type="button" className="btn btn-outline btn-sm" onClick={() => handleViewSchedule(doctor._id)}>Schedule</button>
                   <button type="button" className="btn btn-danger btn-sm" onClick={() => handleDeleteDoctor(doctor._id)}>Deactivate</button>
                 </div>
@@ -397,6 +424,34 @@ const AdminDashboard = () => {
                 </div>
               </>
             )}
+          </div>
+        </div>
+      )}
+
+      {editDoctorModal.doctor && (
+        <div className="modal-overlay" onClick={() => setEditDoctorModal({ doctor: null, firstName: '', lastName: '', specialization: '' })}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <h3 className="modal-title">Edit Doctor</h3>
+            <form onSubmit={handleUpdateDoctor}>
+              <div className="form-row">
+                <div className="input-group">
+                  <label>First Name</label>
+                  <input type="text" value={editDoctorModal.firstName} onChange={(e) => setEditDoctorModal({ ...editDoctorModal, firstName: e.target.value })} required />
+                </div>
+                <div className="input-group">
+                  <label>Last Name</label>
+                  <input type="text" value={editDoctorModal.lastName} onChange={(e) => setEditDoctorModal({ ...editDoctorModal, lastName: e.target.value })} required />
+                </div>
+              </div>
+              <div className="input-group">
+                <label>Specialization</label>
+                <input type="text" value={editDoctorModal.specialization} onChange={(e) => setEditDoctorModal({ ...editDoctorModal, specialization: e.target.value })} />
+              </div>
+              <div className="ui-modal-actions">
+                <button type="button" className="btn btn-outline" onClick={() => setEditDoctorModal({ doctor: null, firstName: '', lastName: '', specialization: '' })}>Cancel</button>
+                <button type="submit" className="btn btn-primary">Save</button>
+              </div>
+            </form>
           </div>
         </div>
       )}
