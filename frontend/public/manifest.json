@@ -1,0 +1,33 @@
+{
+  "name": "Hospital Management",
+  "short_name": "Hospital",
+  "description": "Book and manage hospital appointments",
+  "start_url": "/patient",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "categories": ["medical", "health", "fitness"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book Appointment",
+      "short_name": "Book",
+      "url": "/patient?tab=book",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "My History",
+      "short_name": "History",
+      "url": "/patient?tab=history",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    }
+  ]
+}

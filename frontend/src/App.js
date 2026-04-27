@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -8,6 +8,7 @@ import Register from './pages/Register';
 import AdminDashboard from './pages/AdminDashboard';
 import DoctorDashboard from './pages/DoctorDashboard';
 import PatientDashboard from './pages/PatientDashboard';
+import PatientDesktopDashboard from './pages/PatientDesktopDashboard';
 import './App.css';
 
 const DashboardRouter = () => {
@@ -25,6 +26,32 @@ const DashboardRouter = () => {
     default:
       return <Navigate to="/login" />;
   }
+};
+
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  return isMobile;
+};
+
+const PatientRouter = () => {
+  const isMobile = useIsMobile();
+  
+  if (isMobile) {
+    return <PatientDashboard />;
+  }
+  
+  return (
+    <RoleLayout>
+      <PatientDesktopDashboard />
+    </RoleLayout>
+  );
 };
 
 const App = () => {
@@ -47,9 +74,7 @@ const App = () => {
               path="/patient"
               element={
                 <ProtectedRoute roles={['patient']}>
-                  <RoleLayout>
-                    <PatientDashboard />
-                  </RoleLayout>
+                  <PatientRouter />
                 </ProtectedRoute>
               }
             />

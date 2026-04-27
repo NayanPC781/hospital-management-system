@@ -1,0 +1,81 @@
+/* Patient Desktop Dashboard - Desktop First Styles */
+
+.patient-desktop {
+  padding: var(--space-lg);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.patient-desktop .loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+.patient-desktop .spinner-large {
+  width: 40px;
+  height: 40px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.patient-desktop .ui-stats-row {
+  margin-bottom: var(--space-lg);
+}
+
+.patient-desktop .ui-next-appointment {
+  margin-bottom: var(--space-xl);
+}
+
+.patient-desktop .ui-next-appointment h3 {
+  margin-bottom: var(--space-md);
+}
+
+.patient-desktop .ui-next-appointment-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.patient-desktop .ui-doctor-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.patient-desktop .ui-appointment-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.patient-desktop .ui-appointment-actions {
+  margin-top: var(--space-md);
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.patient-desktop .ui-inline-tabs {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.patient-desktop .ui-inline-tabs .btn.active {
+  background: #1e293b;
+  color: #fff;
+  border-color: #1e293b;
+}
+
+.patient-desktop .ui-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
