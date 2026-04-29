@@ -86,6 +86,11 @@ const AdminDashboard = () => {
       if (appointmentFilters.doctorId && (apt.doctor?._id || apt.doctor) !== appointmentFilters.doctorId) return false;
       if (appointmentFilters.date && new Date(apt.date).toISOString().split('T')[0] !== appointmentFilters.date) return false;
       return true;
+    }).sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      if (dateA - dateB !== 0) return dateA - dateB;
+      return a.time.localeCompare(b.time);
     }),
     [appointments, appointmentFilters]
   );
