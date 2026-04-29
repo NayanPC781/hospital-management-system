@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { doctorService, appointmentService } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
@@ -7,6 +7,7 @@ import StatCard from '../components/ui/StatCard';
 import EmptyState from '../components/ui/EmptyState';
 import StatusBadge from '../components/ui/StatusBadge';
 import FilterBar from '../components/ui/FilterBar';
+import './PatientDesktopDashboard.css';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -19,12 +20,14 @@ const PatientDesktopDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [booking, setBooking] = useState({ date: '', time: '' });
+  const bookSectionRef = useRef(null);
   const [doctorSearch, setDoctorSearch] = useState('');
   const [specializationFilter, setSpecializationFilter] = useState('');
   const [rescheduleModal, setRescheduleModal] = useState({ appointment: null, date: '', time: '' });
   const [notification, setNotification] = useState(null);
 
   const activeTab = searchParams.get('tab') === 'history' ? 'history' : 'overview';
+  const isBookTab = searchParams.get('tab') === 'book';
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -57,6 +60,12 @@ const PatientDesktopDashboard = () => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  useEffect(() => {
+    if (isBookTab && !loading) {
+      bookSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [isBookTab, loading]);
 
   const myAppointments = useMemo(
     () => appointments.filter((a) => a.patient?._id === user?._id || a.patient === user?._id),
@@ -225,31 +234,33 @@ const PatientDesktopDashboard = () => {
       </div>
 
       <PageHeader title="Find a Doctor" subtitle="Filter by name or specialization and pick a slot." />
-      <FilterBar>
-        <input
-          type="text"
-          placeholder="Search doctor or specialization"
-          value={doctorSearch}
-          onChange={(e) => setDoctorSearch(e.target.value)}
-        />
-        <select value={specializationFilter} onChange={(e) => setSpecializationFilter(e.target.value)}>
-          <option value="">All specializations</option>
-          {specializations.map((value) => <option key={value} value={value}>{value}</option>)}
-        </select>
-      </FilterBar>
+      <section ref={bookSectionRef} className={`patient-book-section ${isBookTab ? 'is-active' : ''}`} aria-label="Book appointment">
+        <FilterBar>
+          <input
+            type="text"
+            placeholder="Search doctor or specialization"
+            value={doctorSearch}
+            onChange={(e) => setDoctorSearch(e.target.value)}
+          />
+          <select value={specializationFilter} onChange={(e) => setSpecializationFilter(e.target.value)}>
+            <option value="">All specializations</option>
+            {specializations.map((value) => <option key={value} value={value}>{value}</option>)}
+          </select>
+        </FilterBar>
 
-      <div className="grid grid-3">
-        {filteredDoctors.map((doctor) => (
-          <div key={doctor._id} className="card ui-doctor-card">
-            <h4>Dr. {doctor.firstName} {doctor.lastName}</h4>
-            <p>{doctor.specialization || 'General Medicine'}</p>
-            <button type="button" className="btn btn-primary btn-sm" onClick={() => { setSelectedDoctor(doctor._id); setBooking({ date: '', time: '' }); }}>
-              Select Slots
-            </button>
-          </div>
-        ))}
-        {filteredDoctors.length === 0 && <EmptyState title="No matching doctors" subtitle="Try changing filters." />}
-      </div>
+        <div className="grid grid-3 patient-doctor-grid">
+          {filteredDoctors.map((doctor) => (
+            <div key={doctor._id} className="card ui-doctor-card">
+              <h4>Dr. {doctor.firstName} {doctor.lastName}</h4>
+              <p>{doctor.specialization || 'General Medicine'}</p>
+              <button type="button" className="btn btn-primary btn-sm" onClick={() => { setSelectedDoctor(doctor._id); setBooking({ date: '', time: '' }); }}>
+                Select Slots
+              </button>
+            </div>
+          ))}
+          {filteredDoctors.length === 0 && <EmptyState title="No matching doctors" subtitle="Try changing filters." />}
+        </div>
+      </section>
 
       <PageHeader
         title="My Appointments"

@@ -79,3 +79,82 @@
   gap: var(--space-md);
   margin-top: var(--space-lg);
 }
+
+.patient-desktop .patient-book-section {
+  scroll-margin-top: 80px;
+}
+
+.patient-desktop .patient-book-section.is-active {
+  border-radius: var(--radius-lg);
+}
+
+@media (max-width: 768px) {
+  .patient-desktop {
+    padding: var(--space-md);
+  }
+
+  .patient-desktop .ui-next-appointment-body,
+  .patient-desktop .ui-appointment-row {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .patient-desktop .ui-doctor-card .btn {
+    width: 100%;
+  }
+
+  .patient-desktop .ui-inline-tabs,
+  .patient-desktop .ui-appointment-actions,
+  .patient-desktop .ui-modal-actions {
+    width: 100%;
+  }
+
+  .patient-desktop .ui-inline-tabs .btn,
+  .patient-desktop .ui-appointment-actions .btn,
+  .patient-desktop .ui-modal-actions .btn {
+    flex: 1;
+  }
+
+  .patient-desktop .ui-filter-bar {
+    flex-direction: column;
+  }
+
+  .patient-desktop .ui-filter-bar input,
+  .patient-desktop .ui-filter-bar select {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .patient-desktop .modal-overlay {
+    align-items: flex-end;
+    padding: var(--space-sm);
+  }
+
+  .patient-desktop .modal {
+    border-radius: var(--radius-lg) var(--radius-lg) var(--radius-sm) var(--radius-sm);
+    max-height: 88vh;
+    padding: var(--space-md);
+  }
+
+  .patient-desktop .time-slots-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .patient-desktop {
+    padding: var(--space-sm);
+  }
+
+  .patient-desktop .card {
+    padding: var(--space-md);
+  }
+
+  .patient-desktop .ui-modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .patient-desktop .time-slots-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
