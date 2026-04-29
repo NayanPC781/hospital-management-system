@@ -402,7 +402,6 @@ input:focus, select:focus, textarea:focus {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  position: relative;
   transition: width 0.3s ease;
   overflow: hidden;
 }
