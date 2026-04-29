@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState, useCallback } from 're
 import { useSearchParams } from 'react-router-dom';
 import { appointmentService, doctorService } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { convertTo12Hour } from '../utils/timeFormat';
 import PageHeader from '../components/ui/PageHeader';
 import StatCard from '../components/ui/StatCard';
 import StatusBadge from '../components/ui/StatusBadge';
@@ -104,7 +105,7 @@ const DoctorDashboard = () => {
         {schedule?.schedule?.length ? (
           <div className="ui-chip-row">
             {schedule.schedule.map((slot, i) => (
-              <span key={`${slot.day}-${i}`} className="ui-chip">{slot.day}: {slot.startTime} - {slot.endTime}</span>
+              <span key={`${slot.day}-${i}`} className="ui-chip">{slot.day}: {convertTo12Hour(slot.startTime)} - {convertTo12Hour(slot.endTime)}</span>
             ))}
           </div>
         ) : <p>No schedule set by admin yet.</p>}
@@ -117,7 +118,7 @@ const DoctorDashboard = () => {
             <button type="button" className="ui-agenda-main" onClick={() => setSelectedAppointment(apt)}>
               <div>
                 <h4>{apt.patient?.firstName} {apt.patient?.lastName}</h4>
-                <p>{new Date(apt.date).toLocaleDateString()} at {apt.time}</p>
+                <p>{new Date(apt.date).toLocaleDateString()} at {convertTo12Hour(apt.time)}</p>
               </div>
               <StatusBadge status={apt.status} />
             </button>
@@ -152,7 +153,7 @@ const DoctorDashboard = () => {
             <p><strong>Name:</strong> {selectedAppointment.patient?.firstName} {selectedAppointment.patient?.lastName}</p>
             <p><strong>Email:</strong> {selectedAppointment.patient?.email}</p>
             <p><strong>Date:</strong> {new Date(selectedAppointment.date).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> {selectedAppointment.time}</p>
+            <p><strong>Time:</strong> {convertTo12Hour(selectedAppointment.time)}</p>
             <p><strong>Status:</strong> {selectedAppointment.status}</p>
             <hr />
             <h4>Recent Visits</h4>
@@ -161,7 +162,7 @@ const DoctorDashboard = () => {
                 .filter((a) => (a.patient?._id || a.patient) === (selectedAppointment.patient?._id || selectedAppointment.patient))
                 .slice(0, 5)
                 .map((a) => (
-                  <li key={a._id}>{new Date(a.date).toLocaleDateString()} - {a.time} - {a.status}</li>
+                  <li key={a._id}>{new Date(a.date).toLocaleDateString()} - {convertTo12Hour(a.time)} - {a.status}</li>
                 ))}
             </ul>
           </div>

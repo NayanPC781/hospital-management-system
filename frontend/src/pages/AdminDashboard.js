@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState, useCallback } from 're
 import { useSearchParams } from 'react-router-dom';
 import { doctorService, appointmentService } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { convertTo12Hour } from '../utils/timeFormat';
 import PageHeader from '../components/ui/PageHeader';
 import StatCard from '../components/ui/StatCard';
 import StatusBadge from '../components/ui/StatusBadge';
@@ -323,7 +324,7 @@ const AdminDashboard = () => {
               <tr key={apt._id}>
                 <td>{apt.patient?.firstName} {apt.patient?.lastName}</td>
                 <td>{apt.doctor ? `Dr. ${apt.doctor.firstName} ${apt.doctor.lastName}` : 'Doctor unavailable'}</td>
-                <td>{new Date(apt.date).toLocaleDateString()} at {apt.time}</td>
+                <td>{new Date(apt.date).toLocaleDateString()} at {convertTo12Hour(apt.time)}</td>
                 <td><StatusBadge status={apt.status} /></td>
                 <td>
                   <div className="table-actions">
@@ -394,7 +395,7 @@ const AdminDashboard = () => {
                 .sort((a, b) => new Date(b.date) - new Date(a.date))
                 .map((a) => (
                   <li key={a._id}>
-                    {new Date(a.date).toLocaleDateString()} {a.time} - {a.doctor ? `Dr. ${a.doctor.firstName} ${a.doctor.lastName}` : 'Doctor unavailable'} - {a.status}
+                    {new Date(a.date).toLocaleDateString()} {convertTo12Hour(a.time)} - {a.doctor ? `Dr. ${a.doctor.firstName} ${a.doctor.lastName}` : 'Doctor unavailable'} - {a.status}
                   </li>
                 ))}
             </ul>

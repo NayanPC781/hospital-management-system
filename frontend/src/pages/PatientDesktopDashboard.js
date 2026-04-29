@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom';
 import { doctorService, appointmentService } from '../services/api';
 import { AuthContext } from '../context/AuthContext';
+import { convertTo12Hour } from '../utils/timeFormat';
 import PageHeader from '../components/ui/PageHeader';
 import StatCard from '../components/ui/StatCard';
 import EmptyState from '../components/ui/EmptyState';
@@ -225,7 +226,7 @@ const PatientDesktopDashboard = () => {
         {nextAppointment ? (
           <div className="ui-next-appointment-body">
             <div>
-              <p>{new Date(nextAppointment.date).toLocaleDateString()} at {nextAppointment.time}</p>
+              <p>{new Date(nextAppointment.date).toLocaleDateString()} at {convertTo12Hour(nextAppointment.time)}</p>
               <small>with {nextAppointment.doctor ? `Dr. ${nextAppointment.doctor.firstName} ${nextAppointment.doctor.lastName}` : 'Doctor unavailable'}</small>
             </div>
             <StatusBadge status={nextAppointment.status} />
@@ -278,7 +279,7 @@ const PatientDesktopDashboard = () => {
           <div key={apt._id} className="card">
             <div className="ui-appointment-row">
               <div>
-                <p>{new Date(apt.date).toLocaleDateString()} at {apt.time}</p>
+                <p>{new Date(apt.date).toLocaleDateString()} at {convertTo12Hour(apt.time)}</p>
                 <small>{apt.doctor ? `Dr. ${apt.doctor.firstName} ${apt.doctor.lastName}` : 'Doctor unavailable'}</small>
               </div>
               <StatusBadge status={apt.status} />
@@ -319,7 +320,7 @@ const PatientDesktopDashboard = () => {
                           onClick={() => !isBooked && setBooking((prev) => ({ ...prev, time: slot }))}
                           disabled={isBooked}
                         >
-                          {isBooked ? 'Booked' : slot}
+                          {isBooked ? 'Booked' : convertTo12Hour(slot)}
                         </button>
                       );
                     })}
@@ -358,7 +359,7 @@ const PatientDesktopDashboard = () => {
                           onClick={() => !isBooked && setRescheduleModal((prev) => ({ ...prev, time: slot }))}
                           disabled={isBooked}
                         >
-                          {isBooked ? 'Booked' : slot}
+                          {isBooked ? 'Booked' : convertTo12Hour(slot)}
                         </button>
                       );
                     })}
