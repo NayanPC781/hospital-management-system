@@ -5,6 +5,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RoleLayout from './components/layout/RoleLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import AdminDashboard from './pages/AdminDashboard';
 import DoctorDashboard from './pages/DoctorDashboard';
 import PatientDesktopDashboard from './pages/PatientDesktopDashboard';
@@ -43,6 +45,8 @@ const App = () => {
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
             <Route 
               path="/dashboard" 
               element={

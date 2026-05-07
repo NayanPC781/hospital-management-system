@@ -64,7 +64,10 @@ const Login = () => {
           </div>
 
           <div className="input-group">
-            <label htmlFor="password">Password</label>
+            <div className="auth-label-row">
+              <label htmlFor="password">Password</label>
+              <Link to="/forgot-password">Forgot password?</Link>
+            </div>
             <div className="password-input-wrapper">
               <input
                 type={showPassword ? 'text' : 'password'}
@@ -154,6 +157,24 @@ const Login = () => {
           border-radius: 8px;
           margin-bottom: 20px;
           font-size: 14px;
+        }
+
+        .auth-label-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 12px;
+          margin-bottom: 6px;
+        }
+
+        .auth-label-row label {
+          margin-bottom: 0;
+        }
+
+        .auth-label-row a {
+          font-size: 13px;
+          font-weight: 500;
+          white-space: nowrap;
         }
 
         .password-input-wrapper {
