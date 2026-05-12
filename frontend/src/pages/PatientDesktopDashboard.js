@@ -20,6 +20,15 @@ const formatDateKey = (date) => {
   return `${year}-${month}-${day}`;
 };
 
+const formatDisplayDate = (date) => (
+  new Date(date).toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric'
+  })
+);
+
 const getDateRange = (days = 30) => {
   const dates = [];
   const today = new Date();
@@ -112,8 +121,9 @@ const PatientDesktopDashboard = () => {
   const [rescheduleModal, setRescheduleModal] = useState({ appointment: null, date: '', time: '' });
   const [notification, setNotification] = useState(null);
 
-  const activeTab = searchParams.get('tab') === 'history' ? 'history' : 'overview';
-  const isBookTab = searchParams.get('tab') === 'book';
+  const tabParam = searchParams.get('tab');
+  const activeTab = tabParam === 'history' ? 'history' : 'overview';
+  const isBookTab = tabParam === 'book';
 
   const showNotification = (message, type = 'success') => {
     setNotification({ message, type });
@@ -290,15 +300,16 @@ const PatientDesktopDashboard = () => {
     <div className="page-container patient-desktop">
       {notification && <div className={`toast toast-${notification.type}`}>{notification.message}</div>}
 
-      <PageHeader
-        title="Welcome back"
-        subtitle="Book, manage, and track your appointments quickly."
-        actions={(
-          <button type="button" className="btn btn-primary" onClick={() => setSearchParams({ tab: 'book' })}>
-            Book Appointment
-          </button>
-        )}
-      />
+      <section className="patient-hero">
+        <div>
+          <p className="patient-kicker">Patient portal</p>
+          <h2>Welcome back{user?.firstName ? `, ${user.firstName}` : ''}</h2>
+          <span>Book appointments, review upcoming visits, and manage requests from one workspace.</span>
+        </div>
+        <button type="button" className="btn btn-primary patient-primary-action" onClick={() => setSearchParams({ tab: 'book' })}>
+          Book Appointment
+        </button>
+      </section>
 
       <div className="grid grid-3 ui-stats-row">
         <StatCard label="Upcoming" value={upcomingAppointments.length} tone="primary" />
@@ -307,16 +318,26 @@ const PatientDesktopDashboard = () => {
       </div>
 
       <div className="card ui-next-appointment">
-        <h3>Next Appointment</h3>
+        <div className="patient-section-heading">
+          <div>
+            <p className="patient-kicker">Schedule</p>
+            <h3>Next Appointment</h3>
+          </div>
+        </div>
         {nextAppointment ? (
           <div className="ui-next-appointment-body">
             <div>
-              <p>{new Date(nextAppointment.date).toLocaleDateString()} at {convertTo12Hour(nextAppointment.time)}</p>
+              <p>{formatDisplayDate(nextAppointment.date)} at {convertTo12Hour(nextAppointment.time)}</p>
               <small>with {nextAppointment.doctor ? `Dr. ${nextAppointment.doctor.firstName} ${nextAppointment.doctor.lastName}` : 'Doctor unavailable'}</small>
             </div>
             <StatusBadge status={nextAppointment.status} />
           </div>
-        ) : <p>No upcoming appointments</p>}
+        ) : (
+          <div className="patient-muted-panel">
+            <p>No upcoming appointments</p>
+            <span>Choose a doctor and available slot to schedule your next visit.</span>
+          </div>
+        )}
       </div>
 
       <PageHeader title="Find a Doctor" subtitle="Filter by name or specialization and pick a slot." />
@@ -337,10 +358,15 @@ const PatientDesktopDashboard = () => {
         <div className="grid grid-3 patient-doctor-grid">
           {filteredDoctors.map((doctor) => (
             <div key={doctor._id} className="card ui-doctor-card">
-              <h4>Dr. {doctor.firstName} {doctor.lastName}</h4>
-              <p>{doctor.specialization || 'General Medicine'}</p>
+              <div className="patient-doctor-avatar" aria-hidden="true">
+                {doctor.firstName?.[0]}{doctor.lastName?.[0]}
+              </div>
+              <div className="patient-doctor-copy">
+                <h4>Dr. {doctor.firstName} {doctor.lastName}</h4>
+                <p>{doctor.specialization || 'General Medicine'}</p>
+              </div>
               <button type="button" className="btn btn-primary btn-sm" onClick={() => { setSelectedDoctor(doctor._id); setBooking({ date: '', time: '' }); }}>
-                Select Slots
+                Select Slot
               </button>
             </div>
           ))}
@@ -353,19 +379,20 @@ const PatientDesktopDashboard = () => {
         subtitle="Track status and manage schedule."
         actions={(
           <div className="ui-inline-tabs">
-            <button type="button" className={`btn btn-outline ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => {}}>Upcoming</button>
+            <button type="button" className={`btn btn-outline ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setSearchParams({})}>Upcoming</button>
             <button type="button" className={`btn btn-outline ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setSearchParams({ tab: 'history' })}>Past</button>
           </div>
         )}
       />
 
-      <div className="grid grid-2">
+      <div className="grid grid-2 patient-appointments-grid">
         {(activeTab === 'history' ? pastAppointments : upcomingAppointments).map((apt) => (
-          <div key={apt._id} className="card">
+          <div key={apt._id} className="card patient-appointment-card">
             <div className="ui-appointment-row">
               <div>
-                <p>{new Date(apt.date).toLocaleDateString()} at {convertTo12Hour(apt.time)}</p>
-                <small>{apt.doctor ? `Dr. ${apt.doctor.firstName} ${apt.doctor.lastName}` : 'Doctor unavailable'}</small>
+                <span className="patient-appointment-date">{formatDisplayDate(apt.date)} at {convertTo12Hour(apt.time)}</span>
+                <p>{apt.doctor ? `Dr. ${apt.doctor.firstName} ${apt.doctor.lastName}` : 'Doctor unavailable'}</p>
+                <small>{apt.doctor?.specialization || 'General Medicine'}</small>
               </div>
               <StatusBadge status={apt.status} />
             </div>

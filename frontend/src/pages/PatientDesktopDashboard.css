@@ -1,9 +1,53 @@
 /* Patient Desktop Dashboard - Desktop First Styles */
 
 .patient-desktop {
-  padding: var(--space-lg);
-  max-width: 1200px;
+  padding: 28px;
+  max-width: 1240px;
   margin: 0 auto;
+}
+
+.patient-hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  padding: 26px;
+  border: 1px solid #dbe3ef;
+  border-radius: 14px;
+  background:
+    linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(37, 99, 235, 0.06)),
+    #ffffff;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.06);
+}
+
+.patient-hero h2 {
+  margin: 0 0 8px;
+  color: #0f172a;
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.patient-hero span {
+  display: block;
+  max-width: 680px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.patient-kicker {
+  margin: 0 0 8px;
+  color: #0f766e;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.patient-primary-action {
+  flex-shrink: 0;
+  min-height: 42px;
+  border-radius: 9px;
 }
 
 .patient-desktop .loading-container {
@@ -27,50 +71,183 @@
 }
 
 .patient-desktop .ui-stats-row {
-  margin-bottom: var(--space-lg);
+  margin-bottom: 22px;
+}
+
+.patient-desktop .ui-stat-card {
+  border-color: #dbe3ef;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+}
+
+.patient-desktop .ui-stat-value {
+  font-size: 30px;
 }
 
 .patient-desktop .ui-next-appointment {
-  margin-bottom: var(--space-xl);
+  margin-bottom: 30px;
+  border-color: #dbe3ef;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.05);
 }
 
 .patient-desktop .ui-next-appointment h3 {
-  margin-bottom: var(--space-md);
+  margin: 0;
+  color: #0f172a;
+}
+
+.patient-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .patient-desktop .ui-next-appointment-body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.patient-desktop .ui-next-appointment-body p {
+  margin-bottom: 2px;
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.patient-desktop .ui-next-appointment-body small {
+  color: #64748b;
+}
+
+.patient-muted-panel {
+  padding: 18px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+}
+
+.patient-muted-panel p {
+  margin-bottom: 4px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.patient-muted-panel span {
+  color: #64748b;
+  font-size: 14px;
 }
 
 .patient-desktop .ui-doctor-card {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-sm);
+  display: grid;
+  grid-template-columns: 44px 1fr;
+  gap: 12px;
+  align-items: center;
+  border-color: #dbe3ef;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+}
+
+.patient-doctor-avatar {
+  width: 44px;
+  height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  color: #0f766e;
+  background: #ccfbf1;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.patient-doctor-copy {
+  min-width: 0;
+}
+
+.patient-doctor-copy h4 {
+  margin-bottom: 2px;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.patient-doctor-copy p {
+  color: #64748b;
+  font-size: 13px;
+}
+
+.patient-desktop .ui-doctor-card .btn {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 4px;
 }
 
 .patient-desktop .ui-appointment-row {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  gap: 14px;
+}
+
+.patient-appointments-grid {
+  align-items: stretch;
+}
+
+.patient-appointment-card {
+  border-color: #dbe3ef;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.04);
+}
+
+.patient-appointment-date {
+  display: block;
+  margin-bottom: 8px;
+  color: #0f766e;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.patient-appointment-card p {
+  margin-bottom: 2px;
+  color: #0f172a;
+  font-weight: 700;
+}
+
+.patient-appointment-card small {
+  color: #64748b;
 }
 
 .patient-desktop .ui-appointment-actions {
-  margin-top: var(--space-md);
+  margin-top: 16px;
   display: flex;
-  gap: var(--space-sm);
+  gap: 8px;
 }
 
 .patient-desktop .ui-inline-tabs {
   display: flex;
-  gap: var(--space-sm);
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+  background: #f8fafc;
 }
 
 .patient-desktop .ui-inline-tabs .btn.active {
-  background: #1e293b;
+  background: #0f766e;
   color: #fff;
-  border-color: #1e293b;
+  border-color: #0f766e;
+  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.18);
+}
+
+.patient-desktop .ui-inline-tabs .btn {
+  border-radius: 8px;
+  background: transparent;
 }
 
 .patient-desktop .ui-modal-actions {
@@ -82,15 +259,184 @@
 
 .patient-desktop .patient-book-section {
   scroll-margin-top: 80px;
+  margin-bottom: 30px;
 }
 
 .patient-desktop .patient-book-section.is-active {
-  border-radius: var(--radius-lg);
+  border-radius: 14px;
+}
+
+.patient-desktop .ui-filter-bar {
+  border-color: #dbe3ef;
+  border-radius: 12px;
+}
+
+.patient-desktop .ui-filter-bar input,
+.patient-desktop .ui-filter-bar select {
+  border-radius: 9px;
+}
+
+.patient-desktop .availability-calendar {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.patient-desktop .calendar-header {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  text-align: center;
+  margin-bottom: var(--space-md);
+}
+
+.patient-desktop .calendar-empty-state {
+  text-align: center;
+  padding: var(--space-lg);
+  color: #64748b;
+}
+
+.patient-desktop .calendar-empty-state p {
+  margin: 0;
+}
+
+.patient-desktop .calendar-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: var(--space-sm);
+}
+
+.patient-desktop .calendar-weekdays span {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  padding: 4px;
+}
+
+.patient-desktop .calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.patient-desktop .calendar-day {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #e2e8f0;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  font-size: 14px;
+  color: #94a3b8;
+  cursor: not-allowed;
+  transition: all 0.15s ease;
+  padding: 0;
+}
+
+.patient-desktop .calendar-day.available {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+  cursor: pointer;
+}
+
+.patient-desktop .calendar-day.available:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.patient-desktop .calendar-day.selected {
+  background: #0f766e;
+  border-color: #0f766e;
+  color: #fff;
+  font-weight: 700;
+}
+
+.patient-desktop .calendar-day.selected:hover {
+  background: #115e59;
+  border-color: #115e59;
+}
+
+.patient-desktop .calendar-day.past {
+  background: #f1f5f9;
+  color: #cbd5e1;
+}
+
+.patient-desktop .calendar-day:disabled {
+  cursor: not-allowed;
+}
+
+.patient-desktop .calendar-legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  margin-top: var(--space-md);
+  padding-top: var(--space-sm);
+  border-top: 1px solid #e2e8f0;
+}
+
+.patient-desktop .legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #64748b;
+}
+
+.patient-desktop .legend-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+}
+
+.patient-desktop .legend-dot.available {
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.patient-desktop .legend-dot.selected {
+  background: #0f766e;
+}
+
+.patient-desktop .legend-dot.unavailable {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+}
+
+.patient-desktop .modal-subtitle {
+  margin: -8px 0 var(--space-md);
+  color: #64748b;
+  font-size: 14px;
+}
+
+.patient-desktop .no-slots {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: #64748b;
+  padding: var(--space-md);
 }
 
 @media (max-width: 768px) {
   .patient-desktop {
     padding: var(--space-md);
+  }
+
+  .patient-hero {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 20px;
+  }
+
+  .patient-hero h2 {
+    font-size: 26px;
+  }
+
+  .patient-primary-action {
+    width: 100%;
   }
 
   .patient-desktop .ui-next-appointment-body,
@@ -156,149 +502,5 @@
 
   .patient-desktop .time-slots-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .patient-desktop .availability-calendar {
-    background: #f8fafc;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-md);
-    padding: var(--space-md);
-  }
-
-  .patient-desktop .calendar-header {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1e293b;
-    text-align: center;
-    margin-bottom: var(--space-md);
-  }
-
-  .patient-desktop .calendar-empty-state {
-    text-align: center;
-    padding: var(--space-lg);
-    color: #64748b;
-  }
-
-  .patient-desktop .calendar-empty-state p {
-    margin: 0;
-  }
-
-  .patient-desktop .calendar-weekdays {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-    margin-bottom: var(--space-sm);
-  }
-
-  .patient-desktop .calendar-weekdays span {
-    text-align: center;
-    font-size: 12px;
-    font-weight: 600;
-    color: #64748b;
-    padding: 4px;
-  }
-
-  .patient-desktop .calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
-  }
-
-  .patient-desktop .calendar-day {
-    aspect-ratio: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #e2e8f0;
-    border-radius: var(--radius-sm);
-    background: #fff;
-    font-size: 14px;
-    color: #94a3b8;
-    cursor: not-allowed;
-    transition: all 0.15s ease;
-    padding: 0;
-  }
-
-  .patient-desktop .calendar-day.available {
-    background: #eff6ff;
-    border-color: #bfdbfe;
-    color: #1d4ed8;
-    cursor: pointer;
-  }
-
-  .patient-desktop .calendar-day.available:hover {
-    background: #dbeafe;
-    border-color: #93c5fd;
-  }
-
-  .patient-desktop .calendar-day.selected {
-    background: #2563eb;
-    border-color: #2563eb;
-    color: #fff;
-    font-weight: 600;
-  }
-
-  .patient-desktop .calendar-day.selected:hover {
-    background: #1d4ed8;
-    border-color: #1d4ed8;
-  }
-
-  .patient-desktop .calendar-day.past {
-    background: #f1f5f9;
-    color: #cbd5e1;
-  }
-
-  .patient-desktop .calendar-day:disabled {
-    cursor: not-allowed;
-  }
-
-  .patient-desktop .calendar-legend {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-md);
-    margin-top: var(--space-md);
-    padding-top: var(--space-sm);
-    border-top: 1px solid #e2e8f0;
-  }
-
-  .patient-desktop .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 12px;
-    color: #64748b;
-  }
-
-  .patient-desktop .legend-dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 3px;
-  }
-
-  .patient-desktop .legend-dot.available {
-    background: #eff6ff;
-    border: 1px solid #bfdbfe;
-  }
-
-  .patient-desktop .legend-dot.selected {
-    background: #2563eb;
-  }
-
-  .patient-desktop .legend-dot.unavailable {
-    background: #f1f5f9;
-    border: 1px solid #e2e8f0;
-  }
-
-  .patient-desktop .modal-subtitle {
-    margin: -8px 0 var(--space-md);
-    color: #64748b;
-    font-size: 14px;
-  }
-
-  .patient-desktop .no-slots {
-    grid-column: 1 / -1;
-    text-align: center;
-    color: #64748b;
-    padding: var(--space-md);
   }
 }
