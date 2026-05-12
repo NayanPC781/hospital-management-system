@@ -116,6 +116,7 @@ const PatientDesktopDashboard = () => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [booking, setBooking] = useState({ date: '', time: '' });
   const bookSectionRef = useRef(null);
+  const appointmentsSectionRef = useRef(null);
   const [doctorSearch, setDoctorSearch] = useState('');
   const [specializationFilter, setSpecializationFilter] = useState('');
   const [rescheduleModal, setRescheduleModal] = useState({ appointment: null, date: '', time: '' });
@@ -161,7 +162,10 @@ const PatientDesktopDashboard = () => {
     if (isBookTab && !loading) {
       bookSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [isBookTab, loading]);
+    if (activeTab === 'history' && !loading) {
+      appointmentsSectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [activeTab, isBookTab, loading]);
 
   const myAppointments = useMemo(
     () => appointments.filter((a) => a.patient?._id === user?._id || a.patient === user?._id),
@@ -374,40 +378,42 @@ const PatientDesktopDashboard = () => {
         </div>
       </section>
 
-      <PageHeader
-        title="My Appointments"
-        subtitle="Track status and manage schedule."
-        actions={(
-          <div className="ui-inline-tabs">
-            <button type="button" className={`btn btn-outline ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setSearchParams({})}>Upcoming</button>
-            <button type="button" className={`btn btn-outline ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setSearchParams({ tab: 'history' })}>Past</button>
-          </div>
-        )}
-      />
-
-      <div className="grid grid-2 patient-appointments-grid">
-        {(activeTab === 'history' ? pastAppointments : upcomingAppointments).map((apt) => (
-          <div key={apt._id} className="card patient-appointment-card">
-            <div className="ui-appointment-row">
-              <div>
-                <span className="patient-appointment-date">{formatDisplayDate(apt.date)} at {convertTo12Hour(apt.time)}</span>
-                <p>{apt.doctor ? `Dr. ${apt.doctor.firstName} ${apt.doctor.lastName}` : 'Doctor unavailable'}</p>
-                <small>{apt.doctor?.specialization || 'General Medicine'}</small>
-              </div>
-              <StatusBadge status={apt.status} />
+      <section ref={appointmentsSectionRef} className="patient-appointments-section" aria-label="My appointments">
+        <PageHeader
+          title="My Appointments"
+          subtitle="Track status and manage schedule."
+          actions={(
+            <div className="ui-inline-tabs">
+              <button type="button" className={`btn btn-outline ${activeTab === 'overview' ? 'active' : ''}`} onClick={() => setSearchParams({})}>Upcoming</button>
+              <button type="button" className={`btn btn-outline ${activeTab === 'history' ? 'active' : ''}`} onClick={() => setSearchParams({ tab: 'history' })}>Past</button>
             </div>
-            {(apt.status === 'pending' || apt.status === 'confirmed') && (
-              <div className="ui-appointment-actions">
-                <button type="button" className="btn btn-outline btn-sm" onClick={() => setRescheduleModal({ appointment: apt, date: '', time: '' })}>Reschedule</button>
-                <button type="button" className="btn btn-danger btn-sm" onClick={() => handleCancelAppointment(apt._id)}>Cancel</button>
+          )}
+        />
+
+        <div className="grid grid-2 patient-appointments-grid">
+          {(activeTab === 'history' ? pastAppointments : upcomingAppointments).map((apt) => (
+            <div key={apt._id} className="card patient-appointment-card">
+              <div className="ui-appointment-row">
+                <div>
+                  <span className="patient-appointment-date">{formatDisplayDate(apt.date)} at {convertTo12Hour(apt.time)}</span>
+                  <p>{apt.doctor ? `Dr. ${apt.doctor.firstName} ${apt.doctor.lastName}` : 'Doctor unavailable'}</p>
+                  <small>{apt.doctor?.specialization || 'General Medicine'}</small>
+                </div>
+                <StatusBadge status={apt.status} />
               </div>
-            )}
-          </div>
-        ))}
-        {(activeTab === 'history' ? pastAppointments : upcomingAppointments).length === 0 && (
-          <EmptyState title={activeTab === 'history' ? 'No past appointments' : 'No upcoming appointments'} />
-        )}
-      </div>
+              {(apt.status === 'pending' || apt.status === 'confirmed') && (
+                <div className="ui-appointment-actions">
+                  <button type="button" className="btn btn-outline btn-sm" onClick={() => setRescheduleModal({ appointment: apt, date: '', time: '' })}>Reschedule</button>
+                  <button type="button" className="btn btn-danger btn-sm" onClick={() => handleCancelAppointment(apt._id)}>Cancel</button>
+                </div>
+              )}
+            </div>
+          ))}
+          {(activeTab === 'history' ? pastAppointments : upcomingAppointments).length === 0 && (
+            <EmptyState title={activeTab === 'history' ? 'No past appointments' : 'No upcoming appointments'} />
+          )}
+        </div>
+      </section>
 
       {selectedDoctor && (
         <div className="modal-overlay" onClick={() => setSelectedDoctor(null)}>

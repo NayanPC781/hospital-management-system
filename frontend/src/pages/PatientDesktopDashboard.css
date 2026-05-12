@@ -262,6 +262,10 @@
   margin-bottom: 30px;
 }
 
+.patient-appointments-section {
+  scroll-margin-top: 80px;
+}
+
 .patient-desktop .patient-book-section.is-active {
   border-radius: 14px;
 }

@@ -680,6 +680,61 @@ input:focus, select:focus, textarea:focus {
   padding: 8px 10px;
 }
 
+.role-confirm-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: rgba(15, 23, 42, 0.42);
+}
+
+.role-confirm-dialog {
+  width: min(390px, 100%);
+  padding: 24px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.22);
+}
+
+.role-confirm-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  border-radius: 12px;
+  color: #b91c1c;
+  background: #fef2f2;
+}
+
+.role-confirm-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.role-confirm-dialog h2 {
+  margin-bottom: 6px;
+  color: #0f172a;
+  font-size: 20px;
+}
+
+.role-confirm-dialog p {
+  color: #64748b;
+  font-size: 14px;
+}
+
+.role-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
 .role-main {
   min-height: calc(100vh - 64px);
 }

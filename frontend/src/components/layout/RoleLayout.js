@@ -100,9 +100,16 @@ const RoleLayout = ({ children }) => {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
   const menu = useMemo(() => roleMenus[user?.role] || [], [user?.role]);
 
-  const onLogout = () => {
+  const requestLogout = () => {
+    setMenuOpen(false);
+    setLogoutConfirmOpen(true);
+  };
+
+  const confirmLogout = () => {
+    setLogoutConfirmOpen(false);
     logout();
     navigate('/login');
   };
@@ -156,7 +163,7 @@ const RoleLayout = ({ children }) => {
         </nav>
 
         <div className="role-sidebar-footer">
-          <button type="button" className="role-nav-item role-logout" onClick={onLogout}>
+          <button type="button" className="role-nav-item role-logout" onClick={requestLogout}>
             <span className="role-nav-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
@@ -187,13 +194,43 @@ const RoleLayout = ({ children }) => {
             {menuOpen && (
               <div className="role-user-dropdown">
                 <p>{user?.email}</p>
-                <button type="button" onClick={onLogout}>Sign Out</button>
+                <button type="button" onClick={requestLogout}>Sign Out</button>
               </div>
             )}
           </div>
         </header>
         <main className="role-main">{children}</main>
       </div>
+
+      {logoutConfirmOpen && (
+        <div className="role-confirm-backdrop" role="presentation" onClick={() => setLogoutConfirmOpen(false)}>
+          <div
+            className="role-confirm-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-confirm-title"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="role-confirm-icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+            </div>
+            <h2 id="logout-confirm-title">Sign out?</h2>
+            <p>You will need to sign in again to access this workspace.</p>
+            <div className="role-confirm-actions">
+              <button type="button" className="btn btn-outline" onClick={() => setLogoutConfirmOpen(false)}>
+                Cancel
+              </button>
+              <button type="button" className="btn btn-danger" onClick={confirmLogout}>
+                Sign Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
