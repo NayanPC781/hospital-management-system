@@ -10,6 +10,7 @@ const router = express.Router();
 const TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/;
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 const ACTIVE_STATUSES = ['pending', 'confirmed'];
+const DEFAULT_PATIENT_HOURLY_BOOKING_LIMIT = 4;
 
 const validate = (req, res, next) => {
   const errors = validationResult(req);
@@ -22,6 +23,11 @@ const validate = (req, res, next) => {
 const toMinutes = (time) => {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
+};
+
+const getPatientHourlyBookingLimit = () => {
+  const limit = Number.parseInt(process.env.PATIENT_HOURLY_BOOKING_LIMIT, 10);
+  return Number.isInteger(limit) && limit > 0 ? limit : DEFAULT_PATIENT_HOURLY_BOOKING_LIMIT;
 };
 
 const normalizeDate = (value) => {
@@ -42,6 +48,30 @@ const userCanAccessAppointment = (user, appointment) => {
   if (user.role === 'doctor') return appointment.doctor.toString() === user._id.toString();
   if (user.role === 'patient') return appointment.patient.toString() === user._id.toString();
   return false;
+};
+
+const validatePatientHourlyLimit = async ({ patientId, date, time, excludeAppointmentId = null }) => {
+  const limit = getPatientHourlyBookingLimit();
+  const [hour] = time.split(':');
+  const query = {
+    patient: patientId,
+    date,
+    time: {
+      $gte: `${hour}:00`,
+      $lte: `${hour}:59`
+    }
+  };
+
+  if (excludeAppointmentId) {
+    query._id = { $ne: excludeAppointmentId };
+  }
+
+  const bookingsThisHour = await Appointment.countDocuments(query);
+  if (bookingsThisHour >= limit) {
+    return { error: 'Patient booking limit reached for this hour' };
+  }
+
+  return { error: null };
 };
 
 const validateDoctorSlot = async ({ doctorId, date, time, excludeAppointmentId = null }) => {
@@ -161,6 +191,15 @@ router.post('/', auth, authorize('patient'), [
       return res.status(400).json({ message: slotValidation.error });
     }
 
+    const patientLimitValidation = await validatePatientHourlyLimit({
+      patientId: req.user._id,
+      date: normalizedDate,
+      time
+    });
+    if (patientLimitValidation.error) {
+      return res.status(400).json({ message: patientLimitValidation.error });
+    }
+
     const appointment = new Appointment({
       patient: req.user._id,
       doctor: doctorId,
@@ -240,6 +279,16 @@ router.patch('/:id/reschedule', auth, [
     });
     if (slotValidation.error) {
       return res.status(400).json({ message: slotValidation.error });
+    }
+
+    const patientLimitValidation = await validatePatientHourlyLimit({
+      patientId: appointment.patient,
+      date: normalizedDate,
+      time: req.body.time,
+      excludeAppointmentId: appointment._id
+    });
+    if (patientLimitValidation.error) {
+      return res.status(400).json({ message: patientLimitValidation.error });
     }
 
     appointment.date = normalizedDate;
