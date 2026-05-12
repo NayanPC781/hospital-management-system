@@ -157,4 +157,148 @@
   .patient-desktop .time-slots-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .patient-desktop .availability-calendar {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: var(--space-md);
+  }
+
+  .patient-desktop .calendar-header {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1e293b;
+    text-align: center;
+    margin-bottom: var(--space-md);
+  }
+
+  .patient-desktop .calendar-empty-state {
+    text-align: center;
+    padding: var(--space-lg);
+    color: #64748b;
+  }
+
+  .patient-desktop .calendar-empty-state p {
+    margin: 0;
+  }
+
+  .patient-desktop .calendar-weekdays {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: var(--space-sm);
+  }
+
+  .patient-desktop .calendar-weekdays span {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    padding: 4px;
+  }
+
+  .patient-desktop .calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+
+  .patient-desktop .calendar-day {
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    background: #fff;
+    font-size: 14px;
+    color: #94a3b8;
+    cursor: not-allowed;
+    transition: all 0.15s ease;
+    padding: 0;
+  }
+
+  .patient-desktop .calendar-day.available {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+    cursor: pointer;
+  }
+
+  .patient-desktop .calendar-day.available:hover {
+    background: #dbeafe;
+    border-color: #93c5fd;
+  }
+
+  .patient-desktop .calendar-day.selected {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .patient-desktop .calendar-day.selected:hover {
+    background: #1d4ed8;
+    border-color: #1d4ed8;
+  }
+
+  .patient-desktop .calendar-day.past {
+    background: #f1f5f9;
+    color: #cbd5e1;
+  }
+
+  .patient-desktop .calendar-day:disabled {
+    cursor: not-allowed;
+  }
+
+  .patient-desktop .calendar-legend {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .patient-desktop .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #64748b;
+  }
+
+  .patient-desktop .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  .patient-desktop .legend-dot.available {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+  }
+
+  .patient-desktop .legend-dot.selected {
+    background: #2563eb;
+  }
+
+  .patient-desktop .legend-dot.unavailable {
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+  }
+
+  .patient-desktop .modal-subtitle {
+    margin: -8px 0 var(--space-md);
+    color: #64748b;
+    font-size: 14px;
+  }
+
+  .patient-desktop .no-slots {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #64748b;
+    padding: var(--space-md);
+  }
 }

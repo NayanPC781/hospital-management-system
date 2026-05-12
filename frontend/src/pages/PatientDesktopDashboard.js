@@ -12,6 +12,91 @@ import './PatientDesktopDashboard.css';
 
 const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
+const formatDateKey = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getDateRange = (days = 30) => {
+  const dates = [];
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  for (let i = 0; i < days; i++) {
+    const date = new Date(today);
+    date.setDate(today.getDate() + i);
+    dates.push(date);
+  }
+  return dates;
+};
+
+const isDoctorAvailableOnDate = (scheduleData, date) => {
+  if (!scheduleData?.schedule || !date) return false;
+  const dayName = DAYS[new Date(date).getDay()];
+  return scheduleData.schedule.some((slot) => slot.day === dayName);
+};
+
+const AvailabilityCalendar = ({ selectedDate, onDateSelect, scheduleData, disabled }) => {
+  const dates = getDateRange(30);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const hasAnyAvailability = dates.some((date) => isDoctorAvailableOnDate(scheduleData, date));
+
+  const monthYearLabel = () => {
+    if (dates.length === 0) return '';
+    const firstDate = dates[0];
+    return firstDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  };
+
+  return (
+    <div className="availability-calendar">
+      <div className="calendar-header">{monthYearLabel()}</div>
+      {!hasAnyAvailability ? (
+        <div className="calendar-empty-state">
+          <p>No schedule configured for this doctor.</p>
+          <p>Please select a different doctor.</p>
+        </div>
+      ) : (
+        <>
+          <div className="calendar-weekdays">
+            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+              <span key={i}>{day}</span>
+            ))}
+          </div>
+          <div className="calendar-grid">
+            {dates.map((date) => {
+              const dateKey = formatDateKey(date);
+              const isPast = date < today;
+              const isAvailable = !isPast && isDoctorAvailableOnDate(scheduleData, date);
+              const isSelected = selectedDate === dateKey;
+              const isDisabled = disabled || isPast || !isAvailable;
+
+              return (
+                <button
+                  key={dateKey}
+                  type="button"
+                  className={`calendar-day ${isAvailable ? 'available' : ''} ${isSelected ? 'selected' : ''} ${isPast ? 'past' : ''}`}
+                  onClick={() => !isDisabled && onDateSelect(dateKey)}
+                  disabled={isDisabled}
+                >
+                  {date.getDate()}
+                </button>
+              );
+            })}
+          </div>
+          <div className="calendar-legend">
+            <span className="legend-item"><span className="legend-dot available"></span>Available</span>
+            <span className="legend-item"><span className="legend-dot selected"></span>Selected</span>
+            <span className="legend-item"><span className="legend-dot unavailable"></span>Unavailable</span>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
 const PatientDesktopDashboard = () => {
   const { user } = React.useContext(AuthContext);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -301,10 +386,21 @@ const PatientDesktopDashboard = () => {
         <div className="modal-overlay" onClick={() => setSelectedDoctor(null)}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="modal-title">Book Appointment</h3>
+            {(() => {
+              const doctor = doctors.find((d) => d._id === selectedDoctor);
+              return doctor ? (
+                <p className="modal-subtitle">Dr. {doctor.firstName} {doctor.lastName} - {doctor.specialization || 'General Medicine'}</p>
+              ) : null;
+            })()}
             <form onSubmit={handleBookAppointment} className="booking-form">
               <div className="input-group">
                 <label>Select date</label>
-                <input type="date" value={booking.date} min={today} onChange={(e) => setBooking({ date: e.target.value, time: '' })} required />
+                <AvailabilityCalendar
+                  selectedDate={booking.date}
+                  onDateSelect={(date) => setBooking({ date, time: '' })}
+                  scheduleData={selectedSchedule}
+                  disabled={!selectedDoctor}
+                />
               </div>
               {booking.date && (
                 <div className="input-group">
@@ -324,6 +420,7 @@ const PatientDesktopDashboard = () => {
                         </button>
                       );
                     })}
+                    {availableSlots.length === 0 && <p className="no-slots">No available slots for this date</p>}
                   </div>
                 </div>
               )}
@@ -340,10 +437,18 @@ const PatientDesktopDashboard = () => {
         <div className="modal-overlay" onClick={() => setRescheduleModal({ appointment: null, date: '', time: '' })}>
           <div className="modal" onClick={(e) => e.stopPropagation()}>
             <h3 className="modal-title">Reschedule Appointment</h3>
+            <p className="modal-subtitle">
+              Dr. {rescheduleModal.appointment.doctor?.firstName} {rescheduleModal.appointment.doctor?.lastName} - {rescheduleModal.appointment.doctor?.specialization || 'General Medicine'}
+            </p>
             <form onSubmit={handleReschedule} className="booking-form">
               <div className="input-group">
                 <label>Select new date</label>
-                <input type="date" value={rescheduleModal.date} min={today} onChange={(e) => setRescheduleModal((prev) => ({ ...prev, date: e.target.value, time: '' }))} required />
+                <AvailabilityCalendar
+                  selectedDate={rescheduleModal.date}
+                  onDateSelect={(date) => setRescheduleModal((prev) => ({ ...prev, date, time: '' }))}
+                  scheduleData={rescheduleSchedule}
+                  disabled={!rescheduleDoctorId}
+                />
               </div>
               {rescheduleModal.date && (
                 <div className="input-group">
@@ -363,6 +468,7 @@ const PatientDesktopDashboard = () => {
                         </button>
                       );
                     })}
+                    {rescheduleSlots.length === 0 && <p className="no-slots">No available slots for this date</p>}
                   </div>
                 </div>
               )}
