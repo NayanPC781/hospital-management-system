@@ -1,5 +1,5 @@
 import React, { useContext, useMemo, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 
 const roleMenus = {
@@ -97,6 +97,7 @@ const icons = {
 const RoleLayout = ({ children }) => {
   const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
+  const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const menu = useMemo(() => roleMenus[user?.role] || [], [user?.role]);
@@ -106,52 +107,51 @@ const RoleLayout = ({ children }) => {
     navigate('/login');
   };
 
+  const isItemActive = (to) => {
+    const [pathname, search = ''] = to.split('?');
+    const targetSearch = search ? `?${search}` : '';
+    return location.pathname === pathname && (location.search || '') === targetSearch;
+  };
+
   return (
     <div className={`role-shell ${collapsed ? 'collapsed' : ''}`}>
       <aside className="role-sidebar">
         <div className="role-brand">
-          {!collapsed && (
-            <>
-              <span className="role-brand-icon">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 14c1.49-1.46 3-3.89 3-5.71c0-2.1-1.34-3.68-3.03-4.18c-.58-.17-1.18-.28-1.81-.38l-.61-.11c-.65-.09-1.31-.09-1.97-.09c-.65 0-1.31 0-1.96.09l-.6.11c-.63.1-1.23.21-1.82.38C6.34 4.61 5 6.19 5 8.29c0 1.82 1.51 4.25 3 5.71" />
-                  <path d="M12 22c4.97 0 9-3.31 9-7c0-2.69-1.86-4.89-4.45-5.71c-.59-.19-1.2-.3-1.83-.38l-.61-.11c-.66-.1-1.32-.1-1.98-.1s-1.32 0-1.98.1l-.61.11c-.63.1-1.24.2-1.83.38C6.86 10.11 5 12.31 5 15c0 3.69 4.03 7 9 7z" />
-                </svg>
-              </span>
-              <div>
-                <strong>Hospital</strong>
-                <small>{roleTitles[user?.role] || 'Workspace'}</small>
-              </div>
-            </>
-          )}
-          {collapsed && (
-            <span className="role-brand-icon role-brand-icon-sm">
+          <div className="role-brand-main">
+            <span className="role-brand-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M19 14c1.49-1.46 3-3.89 3-5.71c0-2.1-1.34-3.68-3.03-4.18c-.58-.17-1.18-.28-1.81-.38l-.61-.11c-.65-.09-1.31-.09-1.97-.09c-.65 0-1.31 0-1.96.09l-.6.11c-.63.1-1.23.21-1.82.38C6.34 4.61 5 6.19 5 8.29c0 1.82 1.51 4.25 3 5.71" />
                 <path d="M12 22c4.97 0 9-3.31 9-7c0-2.69-1.86-4.89-4.45-5.71c-.59-.19-1.2-.3-1.83-.38l-.61-.11c-.66-.1-1.32-.1-1.98-.1s-1.32 0-1.98.1l-.61.11c-.63.1-1.24.2-1.83.38C6.86 10.11 5 12.31 5 15c0 3.69 4.03 7 9 7z" />
               </svg>
             </span>
-          )}
+            <div className="role-brand-copy">
+              <strong>Hospital</strong>
+              <small>{roleTitles[user?.role] || 'Workspace'}</small>
+            </div>
+          </div>
+          <button
+            type="button"
+            className="role-collapse-btn"
+            onClick={() => setCollapsed(!collapsed)}
+            aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {collapsed ? icons.chevronRight : icons.chevronLeft}
+          </button>
         </div>
-
-        <button 
-          type="button" 
-          className="role-collapse-btn"
-          onClick={() => setCollapsed(!collapsed)}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {collapsed ? icons.chevronRight : icons.chevronLeft}
-        </button>
 
         <nav className="role-nav" aria-label="Role navigation">
           {menu.map((item) => (
-            <NavLink
+            <Link
               key={item.to}
               to={item.to}
-              className={({ isActive }) => `role-nav-item ${isActive ? 'active' : ''}`}
+              className={`role-nav-item ${isItemActive(item.to) ? 'active' : ''}`}
+              title={collapsed ? item.label : undefined}
+              aria-current={isItemActive(item.to) ? 'page' : undefined}
             >
               <span className="role-nav-icon">{icons[item.icon]}</span>
-              {!collapsed && <span className="role-nav-label">{item.label}</span>}
-            </NavLink>
+              <span className="role-nav-label">{item.label}</span>
+            </Link>
           ))}
         </nav>
 
@@ -164,7 +164,7 @@ const RoleLayout = ({ children }) => {
                 <line x1="21" y1="12" x2="9" y2="12" />
               </svg>
             </span>
-            {!collapsed && <span className="role-nav-label">Sign Out</span>}
+            <span className="role-nav-label">Sign Out</span>
           </button>
         </div>
       </aside>
