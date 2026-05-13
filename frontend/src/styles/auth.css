@@ -1,5 +1,5 @@
 .auth-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 52px);
   display: grid;
   grid-template-columns: minmax(420px, 0.92fr) minmax(420px, 1fr);
   background: #f7f9fc;

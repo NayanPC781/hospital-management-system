@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Navbar from './Navbar';
 import '../styles/auth.css';
 
 export const EyeIcon = ({ hidden = false }) => (
@@ -86,29 +87,32 @@ const AuthIllustration = ({ mood }) => {
 };
 
 const AuthShell = ({ eyebrow, title, subtitle, children, footer, mood = 'calm' }) => (
-  <main className="auth-page">
-    <section className="auth-showcase" aria-label="Hospital access overview">
-      <div className="auth-showcase-copy">
-        <p>{eyebrow}</p>
-        <h2>Manage appointments, doctors, and patient </h2>
-      </div>
-
-      <AuthIllustration mood={mood} />
-
-    </section>
-
-    <section className="auth-panel" aria-labelledby="auth-title">
-      <div className="auth-form-card">
-        <header className="auth-header">
+  <>
+    <Navbar />
+    <main className="auth-page">
+      <section className="auth-showcase" aria-label="Hospital access overview">
+        <div className="auth-showcase-copy">
           <p>{eyebrow}</p>
-          <h1 id="auth-title">{title}</h1>
-          <span>{subtitle}</span>
-        </header>
-        {children}
-        {footer && <p className="auth-footer">{footer}</p>}
-      </div>
-    </section>
-  </main>
+          <h2>Manage appointments, doctors, and patient </h2>
+        </div>
+
+        <AuthIllustration mood={mood} />
+
+      </section>
+
+      <section className="auth-panel" aria-labelledby="auth-title">
+        <div className="auth-form-card">
+          <header className="auth-header">
+            <p>{eyebrow}</p>
+            <h1 id="auth-title">{title}</h1>
+            <span>{subtitle}</span>
+          </header>
+          {children}
+          {footer && <p className="auth-footer">{footer}</p>}
+        </div>
+      </section>
+    </main>
+  </>
 );
 
 export default AuthShell;
