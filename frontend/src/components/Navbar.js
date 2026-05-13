@@ -48,6 +48,8 @@ const Navbar = () => {
         <div className="navbar-links">
           {user ? (
             <>
+              <Link to="/" className="nav-link">Home</Link>
+              <Link to="/dashboard" className="nav-link">Dashboard</Link>
               <div className="navbar-user" onClick={() => setMenuOpen(!menuOpen)}>
                 <div className="user-avatar">
                   {user.firstName?.[0]}{user.lastName?.[0]}
@@ -83,8 +85,9 @@ const Navbar = () => {
             </>
           ) : (
             <>
+              <Link to="/" className="nav-link">Home</Link>
               <Link to="/login" className="btn-auth">Sign In</Link>
-              <Link to="/register" className="btn-primary-small">Register</Link>
+              <Link to="/register" className="btn-primary-small">Sign Up</Link>
             </>
           )}
         </div>
@@ -128,6 +131,18 @@ const Navbar = () => {
           display: flex;
           align-items: center;
           gap: 12px;
+          position: relative;
+        }
+
+        .nav-link {
+          color: #475569;
+          font-weight: 600;
+          font-size: 14px;
+          padding: 8px 6px;
+        }
+
+        .nav-link:hover {
+          color: #0f766e;
         }
 
         .navbar-user {
@@ -272,6 +287,18 @@ const Navbar = () => {
         }
 
         @media (max-width: 640px) {
+          .navbar-container {
+            padding: 12px 14px;
+          }
+
+          .navbar-brand span {
+            display: none;
+          }
+
+          .navbar-links {
+            gap: 8px;
+          }
+
           .user-name {
             display: none;
           }

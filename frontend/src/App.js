@@ -5,6 +5,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import RoleLayout from './components/layout/RoleLayout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Home from './pages/Home';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import AdminDashboard from './pages/AdminDashboard';
@@ -43,6 +44,7 @@ const App = () => {
       <Router>
         <div className="app">
           <Routes>
+            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -83,7 +85,6 @@ const App = () => {
                 </ProtectedRoute>
               }
             />
-            <Route path="/" element={<Navigate to="/dashboard" />} />
           </Routes>
         </div>
       </Router>
