@@ -50,15 +50,18 @@ const userCanAccessAppointment = (user, appointment) => {
   return false;
 };
 
-const validatePatientHourlyLimit = async ({ patientId, date, time, excludeAppointmentId = null }) => {
+const validatePatientHourlyLimit = async ({
+  patientId,
+  excludeAppointmentId = null
+}) => {
   const limit = getPatientHourlyBookingLimit();
-  const [hour] = time.split(':');
+
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+
   const query = {
     patient: patientId,
-    date,
-    time: {
-      $gte: `${hour}:00`,
-      $lte: `${hour}:59`
+    createdAt: {
+      $gte: oneHourAgo
     }
   };
 
@@ -67,8 +70,11 @@ const validatePatientHourlyLimit = async ({ patientId, date, time, excludeAppoin
   }
 
   const bookingsThisHour = await Appointment.countDocuments(query);
+
   if (bookingsThisHour >= limit) {
-    return { error: 'Patient booking limit reached for this hour' };
+    return {
+      error: 'You can only create 4 bookings within 1 hour'
+    };
   }
 
   return { error: null };
@@ -192,10 +198,8 @@ router.post('/', auth, authorize('patient'), [
     }
 
     const patientLimitValidation = await validatePatientHourlyLimit({
-      patientId: req.user._id,
-      date: normalizedDate,
-      time
-    });
+  patientId: req.user._id
+});
     if (patientLimitValidation.error) {
       return res.status(400).json({ message: patientLimitValidation.error });
     }
@@ -282,11 +286,10 @@ router.patch('/:id/reschedule', auth, [
     }
 
     const patientLimitValidation = await validatePatientHourlyLimit({
-      patientId: appointment.patient,
-      date: normalizedDate,
-      time: req.body.time,
-      excludeAppointmentId: appointment._id
-    });
+  patientId: appointment.patient,
+  excludeAppointmentId: appointment._id
+});
+
     if (patientLimitValidation.error) {
       return res.status(400).json({ message: patientLimitValidation.error });
     }
